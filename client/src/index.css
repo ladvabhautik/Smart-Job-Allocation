@@ -1,0 +1,7 @@
+.auth-bg {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

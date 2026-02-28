@@ -1,0 +1,188 @@
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import DashboardLayout from "../layouts/DashboardLayout";
+import { fetchJobs, createJob } from "../features/jobs/jobSlice";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import { Button } from "primereact/button";
+import { Tag } from "primereact/tag";
+import { Dialog } from "primereact/dialog";
+import { InputText } from "primereact/inputtext";
+import { Dropdown } from "primereact/dropdown";
+import { ProgressSpinner } from "primereact/progressspinner";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+
+export default function JobsPage() {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { role } = useSelector((state) => state.auth);
+    const { jobs, loading, error } = useSelector((state) => state.jobs);
+    console.log("role..", role);
+    const [visible, setVisible] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+
+    const [newJob, setNewJob] = useState({
+        title: "",
+        description: "",
+        zipCode: "",
+        tradeRequired: "",
+        urgency: "Normal",
+    });
+
+    useEffect(() => {
+        dispatch(fetchJobs());
+    }, [dispatch]);
+
+    const urgencyTemplate = (row) => {
+        return (
+            <Tag
+                value={row.urgency}
+                severity={row.urgency === "Urgent" ? "danger" : "success"}
+            />
+        );
+    };
+
+    const actionTemplate = (row) => {
+        return (
+            <Button
+                label="View Bids"
+                icon="pi pi-eye"
+                severity="info"
+                onClick={() => navigate(`/jobs/${row._id}`)}
+            />
+        );
+    };
+
+    const handleCreateJob = async () => {
+        if (!newJob.title || !newJob.zipCode || !newJob.tradeRequired) {
+            toast.error("Please fill required fields");
+            return;
+        }
+
+        try {
+            setSubmitting(true);
+            await dispatch(createJob(newJob)).unwrap();
+            toast.success("Job Created Successfully 🚀");
+            dispatch(fetchJobs());
+            setVisible(false);
+            setNewJob({
+                title: "",
+                description: "",
+                zipCode: "",
+                tradeRequired: "",
+                urgency: "Normal",
+            });
+        } catch {
+            toast.error("Failed to create job");
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    return (
+        <DashboardLayout>
+            <div className="flex justify-content-between align-items-center mb-4">
+                <h2>Jobs List</h2>
+                {role === "admin" && (
+                    <Button
+                        label="Create Job"
+                        icon="pi pi-plus"
+                        onClick={() => setVisible(true)}
+                    />
+                )}
+            </div>
+
+            {/* Loading */}
+            {loading && (
+                <div className="flex justify-content-center mt-5">
+                    <ProgressSpinner />
+                </div>
+            )}
+
+            {/* Error */}
+            {error && <p style={{ color: "red" }}>{error}</p>}
+
+            {/* Table */}
+            {!loading && !error && (
+                <DataTable
+                    value={jobs}
+                    paginator
+                    rows={5}
+                    responsiveLayout="scroll"
+                    stripedRows
+                    className="shadow-2 border-round-lg"
+                >
+                    <Column field="title" header="Title" />
+                    <Column field="zipCode" header="ZIP Code" />
+                    <Column field="tradeRequired" header="Trade" />
+                    <Column header="Urgency" body={urgencyTemplate} />
+                    <Column header="Actions" body={actionTemplate} />
+                </DataTable>
+            )}
+
+            {/* Create Job Dialog */}
+            <Dialog
+                header="Create New Job"
+                visible={visible}
+                style={{ width: "30rem" }}
+                onHide={() => setVisible(false)}
+                modal
+                className="border-round-xl"
+            >
+                <div className="flex flex-column gap-3">
+                    <InputText
+                        placeholder="Title *"
+                        value={newJob.title}
+                        onChange={(e) =>
+                            setNewJob({ ...newJob, title: e.target.value })
+                        }
+                    />
+
+                    <InputText
+                        placeholder="Description"
+                        value={newJob.description}
+                        onChange={(e) =>
+                            setNewJob({ ...newJob, description: e.target.value })
+                        }
+                    />
+
+                    <InputText
+                        placeholder="ZIP Code *"
+                        value={newJob.zipCode}
+                        onChange={(e) =>
+                            setNewJob({ ...newJob, zipCode: e.target.value })
+                        }
+                    />
+
+                    <InputText
+                        placeholder="Trade Required *"
+                        value={newJob.tradeRequired}
+                        onChange={(e) =>
+                            setNewJob({ ...newJob, tradeRequired: e.target.value })
+                        }
+                    />
+
+                    <Dropdown
+                        value={newJob.urgency}
+                        options={[
+                            { label: "Normal", value: "Normal" },
+                            { label: "Urgent", value: "Urgent" },
+                        ]}
+                        onChange={(e) =>
+                            setNewJob({ ...newJob, urgency: e.value })
+                        }
+                        placeholder="Select Urgency"
+                    />
+
+                    <Button
+                        label={submitting ? "Creating..." : "Submit"}
+                        onClick={handleCreateJob}
+                        loading={submitting}
+                        className="mt-2"
+                    />
+                </div>
+            </Dialog>
+        </DashboardLayout>
+    );
+}
