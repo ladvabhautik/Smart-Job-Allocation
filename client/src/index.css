@@ -1,3 +1,14 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  background: #f4f4f9;
+}
+
+h2,
+h3 {
+  margin: 0.5rem 0;
+}
+
 .auth-bg {
   min-height: 100vh;
   background: linear-gradient(135deg, #3b82f6, #6366f1);

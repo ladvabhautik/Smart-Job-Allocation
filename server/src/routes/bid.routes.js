@@ -1,8 +1,9 @@
 const router = require("express").Router();
 const controller = require("../controllers/bid.controller");
 const protect = require("../middleware/auth.middleware");
+const { validateBid } = require("../middleware/validation.middleware");
 
-router.post("/", protect, controller.createBid);
+router.post("/", protect, validateBid, controller.createBid);
 router.get("/", protect, controller.getAllBids);
 router.get("/:jobId", protect, controller.getRankedBids);
 router.patch("/override/:bidId", protect, controller.adminOverride);

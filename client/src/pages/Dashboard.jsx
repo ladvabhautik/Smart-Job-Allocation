@@ -1,10 +1,10 @@
+import { AlertTriangle, BarChart3, Briefcase, Users } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import DashboardLayout from "../layouts/DashboardLayout";
-import { fetchJobs } from "../features/jobs/jobSlice";
-import { fetchBids } from "../features/bids/bidSlice";
 import Chart from "react-apexcharts";
-import { Briefcase, AlertTriangle, BarChart3, Users } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchBids } from "../features/bids/bidSlice";
+import { fetchJobs } from "../features/jobs/jobSlice";
+import DashboardLayout from "../layouts/DashboardLayout";
 import "../styles/dashboard.css";
 
 export default function Dashboard() {
@@ -15,52 +15,42 @@ export default function Dashboard() {
 
     const [dateFilter, setDateFilter] = useState("all");
 
-    // Load on refresh
     useEffect(() => {
         dispatch(fetchJobs());
         dispatch(fetchBids());
     }, [dispatch]);
 
-    // 🔥 Live Auto Refresh
-    useEffect(() => {
-        const interval = setInterval(() => {
-            dispatch(fetchJobs());
-            dispatch(fetchBids());
-        }, 20000);
-
-        return () => clearInterval(interval);
-    }, [dispatch]);
-
-    // Date filter logic
-    const filteredBids = bids?.filter((bid) => {
-        if (dateFilter === "all") return true;
-
-        const bidDate = new Date(bid.createdAt);
-        const now = new Date();
-        const diffDays = (now - bidDate) / (1000 * 60 * 60 * 24);
-
-        if (dateFilter === "7") return diffDays <= 7;
-        if (dateFilter === "30") return diffDays <= 30;
-
-        return true;
-    }) || [];
+    const filteredBids =
+        bids?.filter((bid) => {
+            if (dateFilter === "all") return true;
+            const bidDate = new Date(bid.createdAt);
+            const now = new Date();
+            const diffDays = (now - bidDate) / (1000 * 60 * 60 * 24);
+            if (dateFilter === "7") return diffDays <= 7;
+            if (dateFilter === "30") return diffDays <= 30;
+            return true;
+        }) || [];
 
     const totalJobs = jobs?.length || 0;
-    const urgentJobs = jobs?.filter(j => j.urgency === "Urgent").length || 0;
+    const urgentJobs =
+        jobs?.filter((j) => j.urgency === "Urgent").length || 0;
     const totalBids = filteredBids.length;
 
     const avgScore =
         totalBids > 0
             ? (
-                filteredBids.reduce((acc, b) => acc + (b.finalScore || 0), 0) /
-                totalBids
+                filteredBids.reduce(
+                    (acc, b) => acc + (b.finalScore || 0),
+                    0
+                ) / totalBids
             ).toFixed(2)
             : 0;
 
-    // Top 5 Contractors
+    // 🔥 FIXED HERE
     const contractorStats = {};
     filteredBids.forEach((bid) => {
-        const name = bid.contractor?.name || "Unknown";
+        const contractor = bid.contractorId; // ✅ correct field
+        const name = contractor?.name || "Unknown";
 
         if (!contractorStats[name]) {
             contractorStats[name] = { totalScore: 0, count: 0 };
@@ -90,7 +80,7 @@ export default function Dashboard() {
     const contractorChartSeries = [
         {
             name: "Avg Score",
-            data: topContractors.map((c) => c.avg.toFixed(2)),
+            data: topContractors.map((c) => Number(c.avg.toFixed(2))),
         },
     ];
 
@@ -122,10 +112,11 @@ export default function Dashboard() {
     return (
         <DashboardLayout>
             <div className="dashboard-wrapper">
-
-                <div className="dashboard-header">
-                    <h1>Dashboard Overview</h1>
-                    <p>Track jobs, bids and performance insights</p>
+                <div className="dashboard-header flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h1 className="m-0">Dashboard Overview</h1>
+                        <p className="mb-2 m-0">Track jobs, bids and performance insights</p>
+                    </div>
 
                     <div className="filter-container">
                         <select
@@ -145,9 +136,7 @@ export default function Dashboard() {
                     <>
                         <div className="kpi-grid">
                             <div className="kpi-card blue">
-                                <div className="kpi-icon">
-                                    <Briefcase size={22} />
-                                </div>
+                                <Briefcase size={22} />
                                 <div>
                                     <h2>{totalJobs}</h2>
                                     <span>Total Jobs</span>
@@ -155,9 +144,7 @@ export default function Dashboard() {
                             </div>
 
                             <div className="kpi-card red">
-                                <div className="kpi-icon">
-                                    <AlertTriangle size={22} />
-                                </div>
+                                <AlertTriangle size={22} />
                                 <div>
                                     <h2>{urgentJobs}</h2>
                                     <span>Urgent Jobs</span>
@@ -165,9 +152,7 @@ export default function Dashboard() {
                             </div>
 
                             <div className="kpi-card purple">
-                                <div className="kpi-icon">
-                                    <BarChart3 size={22} />
-                                </div>
+                                <BarChart3 size={22} />
                                 <div>
                                     <h2>{totalBids}</h2>
                                     <span>Total Bids</span>
@@ -175,9 +160,7 @@ export default function Dashboard() {
                             </div>
 
                             <div className="kpi-card green">
-                                <div className="kpi-icon">
-                                    <Users size={22} />
-                                </div>
+                                <Users size={22} />
                                 <div>
                                     <h2>{avgScore}</h2>
                                     <span>Average Score</span>
@@ -187,7 +170,6 @@ export default function Dashboard() {
 
                         <div className="charts-grid">
                             <div className="chart-card">
-                                <div className="chart-title">Jobs Distribution</div>
                                 <Chart
                                     options={donutOptions}
                                     series={donutSeries}
@@ -197,7 +179,6 @@ export default function Dashboard() {
                             </div>
 
                             <div className="chart-card">
-                                <div className="chart-title">Jobs vs Bids</div>
                                 <Chart
                                     options={barOptions}
                                     series={barSeries}
@@ -207,7 +188,7 @@ export default function Dashboard() {
                             </div>
 
                             <div className="chart-card full-width">
-                                <div className="chart-title">Top 5 Contractors</div>
+                                <h3>Top 5 Contractors</h3>
                                 <Chart
                                     options={contractorChartOptions}
                                     series={contractorChartSeries}

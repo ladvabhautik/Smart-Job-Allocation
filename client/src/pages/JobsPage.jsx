@@ -18,7 +18,6 @@ export default function JobsPage() {
     const navigate = useNavigate();
     const { role } = useSelector((state) => state.auth);
     const { jobs, loading, error } = useSelector((state) => state.jobs);
-    console.log("role..", role);
     const [visible, setVisible] = useState(false);
     const [submitting, setSubmitting] = useState(false);
 
@@ -46,9 +45,11 @@ export default function JobsPage() {
     const actionTemplate = (row) => {
         return (
             <Button
+                size="small"
                 label="View Bids"
                 icon="pi pi-eye"
                 severity="info"
+                className="px-2 py-1"
                 onClick={() => navigate(`/jobs/${row._id}`)}
             />
         );
@@ -109,13 +110,18 @@ export default function JobsPage() {
                     value={jobs}
                     paginator
                     rows={5}
-                    responsiveLayout="scroll"
                     stripedRows
                     className="shadow-2 border-round-lg"
+                    scrollable
+                    size="small"
+                    rowsPerPageOptions={[5, 10, 20]}
+                    removableSort
+                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                    currentPageReportTemplate={`Showing {first} to {last} of {totalRecords} Jobs`}
                 >
-                    <Column field="title" header="Title" />
-                    <Column field="zipCode" header="ZIP Code" />
-                    <Column field="tradeRequired" header="Trade" />
+                    <Column field="title" header="Title" sortable filter />
+                    <Column field="zipCode" header="ZIP Code" sortable filter />
+                    <Column field="tradeRequired" header="Trade" sortable filter />
                     <Column header="Urgency" body={urgencyTemplate} />
                     <Column header="Actions" body={actionTemplate} />
                 </DataTable>

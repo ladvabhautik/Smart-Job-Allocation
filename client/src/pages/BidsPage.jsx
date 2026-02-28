@@ -101,12 +101,18 @@ export default function BidsPage() {
         </span>
     );
 
-    const urgencyTemplate = (row) => (
-        <Tag
-            value={row.contractor.activeJobs >= 5 ? "Penalty" : "Normal"}
-            severity={row.contractor.activeJobs >= 5 ? "danger" : "success"}
-        />
-    );
+    const urgencyTemplate = (row) => {
+        const contractor = row.contractorId; // ✅ correct field
+
+        const activeJobs = contractor?.activeJobs || 0;
+
+        return (
+            <Tag
+                value={activeJobs >= 5 ? "Penalty" : "Normal"}
+                severity={activeJobs >= 5 ? "danger" : "success"}
+            />
+        );
+    };
 
     return (
         <DashboardLayout>
@@ -134,17 +140,17 @@ export default function BidsPage() {
                     rows={5}
                     stripedRows
                     className="shadow-2 border-round-lg"
+                    scrollable
+                    size="small"
+                    rowsPerPageOptions={[5, 10, 20]}
+                    removableSort
+                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                    currentPageReportTemplate={`Showing {first} to {last} of {totalRecords} Bids`}
                 >
-                    <Column field="contractor.name" header="Contractor" />
-                    <Column field="contractor.rating" header="Rating" />
-                    <Column
-                        field="contractor.completionRate"
-                        header="Completion %"
-                    />
-                    <Column
-                        field="contractor.activeJobs"
-                        header="Active Jobs"
-                    />
+                    <Column field="contractor.name" header="Contractor" sortable filter />
+                    <Column field="contractor.rating" header="Rating" sortable filter />
+                    <Column field="contractor.completionRate" header="Completion %" sortable filter />
+                    <Column field="contractor.activeJobs" header="Active Jobs" sortable filter />
                     <Column header="Status" body={urgencyTemplate} />
                     <Column header="Score" body={scoreTemplate} />
                     {role === "admin" && (

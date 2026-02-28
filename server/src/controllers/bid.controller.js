@@ -12,10 +12,18 @@ exports.createBid = asyncHandler(async (req, res) => {
     const job = await Job.findById(jobId);
 
     if (!contractor || !job) {
-        return res.status(404).json({ success: false, message: "Job or Contractor not found" });
+        return res.status(404).json({
+            success: false,
+            message: "Job or Contractor not found"
+        });
     }
 
-    const score = await calculateScore(contractor, distance, job);
+    const score = await calculateScore(
+        contractor,
+        distance,
+        job,
+        tradeMatchAccuracy
+    );
 
     const bid = await Bid.create({
         jobId,
