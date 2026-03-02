@@ -1,14 +1,13 @@
+import 'primeicons/primeicons.css';
+import 'primereact/resources/primereact.min.css';
+import 'primereact/resources/themes/lara-light-blue/theme.css';
+import ReactDOM from 'react-dom/client';
+import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
 import './../node_modules/primeflex/primeflex.css';
-import 'primeicons/primeicons.css'
-import 'primereact/resources/primereact.min.css'
-import 'primereact/resources/themes/lara-light-blue/theme.css'
-import ReactDOM from 'react-dom/client'
-import { Provider } from 'react-redux'
-import { BrowserRouter } from 'react-router-dom'
-import App from './App.jsx'
-import './index.css'
-import { store } from './app/store.js'
-import './styles/main.css'
+import App from './App.jsx';
+import { store } from './app/store.js';
+import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>

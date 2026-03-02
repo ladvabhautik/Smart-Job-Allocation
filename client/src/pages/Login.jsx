@@ -1,12 +1,9 @@
-import { Card } from "primereact/card";
-import { InputText } from "primereact/inputtext";
-import { Password } from "primereact/password";
-import { Button } from "primereact/button";
-import { useDispatch } from "react-redux";
-import { login } from "../features/auth/authSlice";
+import { Button, Card, InputText, Password } from "primereact";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { login } from "../features/auth/authSlice";
 
 export default function Login() {
     const dispatch = useDispatch();

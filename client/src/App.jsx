@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, BrowserRouter } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -11,35 +11,37 @@ function App() {
   return (
     <>
       <Toaster position="top-right" />
-      <Routes>
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/jobs"
-          element={
-            <ProtectedRoute>
-              <JobsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/jobs/:jobId"
-          element={
-            <ProtectedRoute>
-              <BidsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/jobs"
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <JobsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/jobs/:jobId"
+            element={
+              <ProtectedRoute allowedRoles={['admin', 'contractor']}>
+                <BidsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </BrowserRouter>
     </>
   );
 }

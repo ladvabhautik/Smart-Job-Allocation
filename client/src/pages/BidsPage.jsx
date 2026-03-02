@@ -1,11 +1,4 @@
-import { Button } from "primereact/button";
-import { Column } from "primereact/column";
-import { DataTable } from "primereact/datatable";
-import { Dialog } from "primereact/dialog";
-import { Dropdown } from "primereact/dropdown";
-import { InputNumber } from "primereact/inputnumber";
-import { ProgressSpinner } from "primereact/progressspinner";
-import { Tag } from "primereact/tag";
+import { Button, Column, DataTable, Dialog, Dropdown, InputNumber, ProgressSpinner, Tag } from "primereact";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,7 +10,6 @@ import {
 } from "../features/bids/bidSlice";
 import DashboardLayout from "../layouts/DashboardLayout";
 import api from "../services/axios";
-
 
 export default function BidsPage() {
     const { jobId } = useParams();
@@ -48,8 +40,6 @@ export default function BidsPage() {
             toast.error("Failed to load contractors");
         }
     };
-
-    console.log("role..", role)
 
     const handleCreateBid = async () => {
         if (!newBid.contractorId) {

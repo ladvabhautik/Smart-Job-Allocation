@@ -1,17 +1,10 @@
+import { Button, Column, DataTable, Dialog, Dropdown, InputText, ProgressSpinner, Tag } from "primereact";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import DashboardLayout from "../layouts/DashboardLayout";
-import { fetchJobs, createJob } from "../features/jobs/jobSlice";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
-import { Button } from "primereact/button";
-import { Tag } from "primereact/tag";
-import { Dialog } from "primereact/dialog";
-import { InputText } from "primereact/inputtext";
-import { Dropdown } from "primereact/dropdown";
-import { ProgressSpinner } from "primereact/progressspinner";
-import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { createJob, fetchJobs } from "../features/jobs/jobSlice";
+import DashboardLayout from "../layouts/DashboardLayout";
 
 export default function JobsPage() {
     const dispatch = useDispatch();
