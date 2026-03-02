@@ -150,16 +150,7 @@ Bids: POST /api/bids GET /api/bids/:jobId PATCH
 
 ------------------------------------------------------------------------
 
-# 📈 Future Enhancements
-
--   Auto assign top contractor
--   Docker support
--   CI/CD pipeline
--   Redis caching
--   Real-time ranking
-
-------------------------------------------------------------------------
-
 # 👨‍💻 Author
 
-Built by: Bhautik 🚀
+Developed by Bhautik\
+Smart Job Allocation System
