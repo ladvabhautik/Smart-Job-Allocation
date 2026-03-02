@@ -5,9 +5,6 @@ node_modules/
 dist/
 build/
 
-# Ignore environment files
-.env
-
 # Ignore log files
 *.log
 
